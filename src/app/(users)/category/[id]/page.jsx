@@ -1,7 +1,7 @@
 import Add from "@/components/add/Add";
 import FileViewer from "@/components/fileviewer/FileViewer";
 import SizeViewer from "@/components/sizeviewer/SizeViewer";
-import { getProduct, getProducts } from "@/lib/lib";
+import { getProduct, getProducts, NumberFormatter } from "@/lib/lib";
 import { Rating } from "@mui/material";
 import { notFound } from "next/navigation";
 
@@ -50,10 +50,10 @@ const SinglePage = async ({ params: { id } }) => {
             <>
               <h4 className='font-medium  text-gray-500'>Price </h4>:
               <h3 className='text-xl text-gray-500 line-through'>
-                ${product.price}
+                ${NumberFormatter(product.price)}
               </h3>
               <h2 className='font-medium text-2xl'>
-                ${product?.price - product?.discount}
+                ${NumberFormatter(product?.price - product?.discount)}
               </h2>
             </>
           ) : (

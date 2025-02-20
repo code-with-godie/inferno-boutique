@@ -1,8 +1,7 @@
-1. proper authentification
 2. payment
-3. profile
-4. gif making
-5. finish dashboard
-6. search
-7. generate app icon
-8. deploy and post in linked in before sunday
+3. gif making
+4. finish dashboard
+5. search
+6. generate app icon
+7. deploy and post in linked in before sunday
+8. handle cart increase decrease prblem

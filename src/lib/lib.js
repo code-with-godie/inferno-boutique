@@ -1,4 +1,9 @@
 const BASE_URL = process.env.NEXT_PUBLIC_CLIENT_URL;
+import numeral from "numeral";
+export const NumberFormatter = (value) => {
+  const formattedValue = numeral(value).format("0,0");
+  return formattedValue;
+};
 export const createUser = async (newUser) => {
   const res = await fetch(`${BASE_URL}/api/v1/users`, {
     method: "POST",

@@ -9,7 +9,7 @@ import Slider from "./Slider";
 // import { Autoplay } from 'swiper/modules';
 
 const Shoe = async () => {
-  const products = await getCategoryProducts({ category: "shoe" });
+  const products = await getCategoryProducts({ filters: { category: "shoe" } });
 
   if (!products) {
     return <div>could not load shoe</div>;

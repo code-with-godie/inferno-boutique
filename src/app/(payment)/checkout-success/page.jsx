@@ -1,17 +1,22 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 
 const SuccessPage = () => {
   const router = useRouter();
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const redirectTimeout = setTimeout(() => {
       router.push("/");
     }, 5000);
 
+    // Set dimensions for Confetti
+    setDimensions({ width: window.innerWidth, height: window.innerHeight });
+
+    // Cleanup function to clear the timeout
     return () => clearTimeout(redirectTimeout);
   }, [router]);
 
@@ -27,7 +32,7 @@ const SuccessPage = () => {
       <p className='text-gray-500'>waiting for a redirect...</p>
       <p className='text-gray-500'>Thank you for shopping with us.</p>
       <p className='text-gray-500'>Your order is being prepared for delivery</p>
-      <Confetti width={window.innerWidth} height={window.innerHeight} />
+      <Confetti width={dimensions.width} height={dimensions.height} />
     </div>
   );
 };

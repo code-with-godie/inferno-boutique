@@ -19,7 +19,6 @@ import { addProduct } from "@/lib/actions";
 import LoadingAnimation from "@/components/loading/LoadingAnimation";
 import { useRouter } from "next/navigation";
 import { BsPlus } from "react-icons/bs";
-import { deleteImage, deleteImageFromCloudinary } from "@/actions";
 import CloudinaryUpload from "@/components/cloudinary/CloudinaryWidget";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -107,7 +106,7 @@ const NewProductPage = () => {
             />
             {images.length > 0 && (
               <IconButton
-                className='absolute z-10 right-2 top-2 p-1 bg-white'
+                className='absolute z-10 right-2 top-1 p-1 bg-white'
                 onClick={() => removeImage(images[0]?.public_id)}
               >
                 <Close className='text-sm ' />
@@ -126,19 +125,22 @@ const NewProductPage = () => {
               <div className=' flex items-center gap-2 p-2'>
                 {sizes.map((item, index) => {
                   return (
-                    <div key={index} className='flex items-center gap-1'>
+                    <div
+                      key={index}
+                      className='flex flex-shrink-0 items-center gap-1'
+                    >
                       <p className='bg-blue-500 text-sm p-2 px-4 rounded-lg relative mr-3'>
                         {item}
-                        <IconButton
+                        <button
                           onClick={() =>
                             setSizes((prev) =>
                               prev?.filter((_, i) => i !== index)
                             )
                           }
-                          className='text-gray-400 bg-white absolute -top-1 z-10 p-1 -right-2 hover:bg-gray-300'
+                          className='text-gray-400 bg-red-500 absolute -top-1 z-10 p-1 -right-2 hover:bg-gray-300'
                         >
                           <Close className='text-sm' />
-                        </IconButton>
+                        </button>
                       </p>
                     </div>
                   );
@@ -179,16 +181,16 @@ const NewProductPage = () => {
                         className='bg-bgSoft text-sm p-2 px-4 rounded-lg relative mr-3'
                       >
                         {item}
-                        <IconButton
+                        <button
                           onClick={() =>
                             setColors((prev) =>
                               prev?.filter((_, i) => i !== index)
                             )
                           }
-                          className='text-gray-400 bg-white absolute -top-1 z-10 p-1 -right-2 hover:bg-gray-300'
+                          className='text-gray-400 bg-red-500 absolute -top-1 z-10 p-1 -right-2 hover:bg-gray-300'
                         >
                           <Close className='text-sm' />
-                        </IconButton>
+                        </button>
                       </p>
                     </div>
                   );

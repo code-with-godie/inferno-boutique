@@ -26,7 +26,7 @@ const columns = [
   {
     field: "title",
     headerName: "Title",
-    width: 150,
+    width: 100,
     renderCell: (params) => (
       <div className='flex items-center justify-center'>{params.row.title}</div>
     ),
@@ -129,14 +129,14 @@ const columns = [
     width: 120,
     renderCell: (params) => (
       <div className='flex items-center justify-center'>
-        {params.row.climates}
+        {params.row.climates?.join(",")}
       </div>
     ),
   },
   {
     field: "gender",
     headerName: "Gender",
-    width: 100,
+    width: 80,
     renderCell: (params) => (
       <div className='flex items-center justify-center'>
         {params.row.gender}
@@ -146,7 +146,7 @@ const columns = [
   {
     field: "description",
     headerName: "Description",
-    width: 150,
+    width: 120,
     renderCell: (params) => (
       <div className='flex items-center justify-center'>
         {params.row.description}
@@ -156,7 +156,7 @@ const columns = [
   {
     field: "createdAt",
     headerName: "Date",
-    width: 200,
+    width: 150,
     renderCell: (params) => {
       const date = moment(params?.row?.createdAt).format("MMMM Do YYYY");
       return <div className='flex items-center justify-center'>{date}</div>;
@@ -165,10 +165,15 @@ const columns = [
   {
     field: "actions",
     headerName: "Actions",
-    width: 200,
+    width: 170,
     renderCell: (params) => (
       <div className='flex items-center justify-center'>
-        <Actions deleteAction={deleteProduct} page='products' id={params.id} />
+        <Actions
+          deleteAction={deleteProduct}
+          page='products'
+          id={params.id}
+          product={params.row} // Pass the full product data here
+        />
       </div>
     ),
   },

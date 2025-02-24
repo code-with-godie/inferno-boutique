@@ -11,6 +11,7 @@ const Table = ({ columns = [], rows = [] }) => {
         slots={{ toolbar: GridToolbar }}
         columns={columns}
         getRowId={(row) => row._id}
+        getRowHeight={() => 40} // Set row height to auto to fit content
         getRowSpacing={(params) => ({
           top: params.isFirstVisible ? 0 : 6,
           bottom: params.isLastVisible ? 0 : 6,
@@ -33,6 +34,8 @@ const Table = ({ columns = [], rows = [] }) => {
           },
           // Cell styling
           "& .MuiDataGrid-cell": {
+            display: "flex",
+            alignItems: "center",
             borderBottom: "1px solid #1A1D2C", // Light pink border below cells
             padding: "10px", // Increase padding for a more spacious look
           },

@@ -1,24 +1,17 @@
-import { NextResponse } from 'next/server';
-import Products from '@/app/api/v1/models/Product';
-import connectToDB from '@/app/api/db/connect';
-import errorHandler from '@/app/api/errors/errorHandler';
-import { StatusCodes } from 'http-status-codes';
-import { v2 as cloudinary } from 'cloudinary';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-export const GET = async request => {
+import { NextResponse } from "next/server";
+import Products from "@/app/api/v1/models/Product";
+import connectToDB from "@/app/api/db/connect";
+import errorHandler from "@/app/api/errors/errorHandler";
+import { StatusCodes } from "http-status-codes";
+export const GET = async (request) => {
   try {
     // Extracting the query string parameter 'q'
-    const query = request.nextUrl.searchParams.get('q');
-    const page = request.nextUrl.searchParams.get('page');
+    const query = request.nextUrl.searchParams.get("q");
+    const page = request.nextUrl.searchParams.get("page");
     const ITES_PER_PAGE = 10;
     const filters = {};
-    if (query && query !== 'undefined') {
-      const regex = new RegExp(query, 'i');
+    if (query && query !== "undefined") {
+      const regex = new RegExp(query, "i");
       filters.$and = [
         { title: { $regex: regex } },
         { description: { $regex: regex } },
@@ -29,7 +22,7 @@ export const GET = async request => {
     // const count = Products.find({}).count();
     // console.log('counting produvts', count);
 
-    if (page === 'all') {
+    if (page === "all") {
       products = await Products.find({});
     } else {
       products = await Products.find({}).limit(ITES_PER_PAGE);
@@ -47,22 +40,10 @@ export const GET = async request => {
     return errorHandler(error);
   }
 };
-export const POST = async req => {
+export const POST = async (req) => {
   try {
     await connectToDB();
     const body = await req.json();
-    // const images = [];
-    //uplaod images to cloudinary
-    // for (let i = 0; i < body?.images?.length; i++) {
-    //   const response = await cloudinary.uploader.upload(body?.images[i], {
-    //     resource_type: 'auto',
-    //     folder: 'inferno-boutique/products',
-    //   });
-    //   const { secure_url, public_id } = response;
-    //   images[i] = { secure_url, public_id };
-    // }
-    // console.log(images);
-
     const product = await Products.create(body);
     return NextResponse.json(
       {

@@ -32,7 +32,7 @@ export const StripeElement = ({ clientSecret, amount }) => {
         confirmParams: {
           return_url:
             `${process.env.NEXT_PUBLIC_CLIENT_URL}/checkout-success` ||
-            "http://localhost:3000/success",
+            "http://localhost:3000/checkout-success",
         },
       });
       if (error) {

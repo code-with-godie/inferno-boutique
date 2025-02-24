@@ -2,17 +2,24 @@ import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
 // Initialize the Stripe client
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2024-06-20",
+});
 
 export const POST = async (request) => {
   const body = await request.json();
   try {
-    const { userID, productsID, amount } = body;
+    const { userID, products, amount } = body;
+    // Validate input data
+    if (!userID || !Array.isArray(products) || typeof amount !== "number") {
+      throw new Error("Invalid input data");
+    }
+
     // Create a customer
     const customer = await stripe.customers.create({
       metadata: {
-        userID,
-        productsID,
+        userID: JSON.stringify(userID), // Ensure userID is a string
+        products: JSON.stringify(products),
       },
     });
 
@@ -28,6 +35,7 @@ export const POST = async (request) => {
       success: true,
       message: "Stripe payment intent created",
       clientSecret: paymentIntent.client_secret,
+      customerId: customer.id, // Return customer ID instead of the entire customer object
     });
   } catch (error) {
     console.error("Error in Stripe payment:", error);

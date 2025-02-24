@@ -1,21 +1,21 @@
 "use client";
 
 import { useAppContext } from "@/context/AppContext";
-import { Add, Remove } from "@mui/icons-material";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import LoadingAnimation from "../loading/LoadingAnimation";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import StripeCheckout from "../stripe/StripeCheckout";
-import { NumberFormatter } from "@/lib/lib";
+import { createStripeIntent, NumberFormatter } from "@/lib/lib";
+import toast, { Toaster } from "react-hot-toast";
+import { createMyOrdr } from "@/lib/actions";
 
 const CartModal = () => {
   const { isSignedIn } = useUser();
-  const [loading, setLoading] = useState(false);
+  const [clientSecret, setClientSecret] = useState(null);
+  const [creatingIntent, setCreatingIntent] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [error, setError] = useState(null);
-  const router = useRouter();
   const {
     cart,
     removeCartItem,
@@ -24,18 +24,62 @@ const CartModal = () => {
     decreaseCartItem,
   } = useAppContext();
 
+  const { user } = useUser();
+
+  const convertCurrency = (currency) => {
+    return Math.round(currency * 100);
+  };
+  const createpaymentIntext = useCallback(async () => {
+    try {
+      const amount = convertCurrency(cart?.total);
+      const products = cart?.cartItems?.map((item) => {
+        const { _id, variants } = item;
+        // Ensure variants is an array before using reduce
+        const quantity = Array.isArray(variants)
+          ? variants.reduce((acc, variant) => {
+              // Ensure variant.quantity is a number before adding
+              const variantQuantity =
+                typeof variant.quantity === "number" ? variant.quantity : 0;
+              return acc + variantQuantity;
+            }, 0) // Initial value for reduce is 0
+          : 0; // Default quantity if variants is not an array
+
+        return {
+          _id,
+          quantity,
+        };
+      });
+
+      const res = await createStripeIntent({
+        amount,
+        products,
+        userID: user?.id,
+      });
+      if (res) {
+        setClientSecret(res.clientSecret);
+        setShowPaymentModal(true);
+      }
+    } catch (error) {
+      console.log("payment creation error", error);
+      toast.error(`${error?.message} 😟😟😟😟`);
+    }
+  }, [cart?.cartItems, cart.total, user?.id]);
+  const router = useRouter();
+
   const handleCheckout = async () => {
     try {
       if (!isSignedIn) {
         router.push("/auth/sign-in");
         return;
       }
-      setShowPaymentModal(true);
+
+      setCreatingIntent(true);
+      await createpaymentIntext();
     } catch (error) {
       console.log(error);
-      setError(error?.message);
+      setCreatingIntent(true);
     } finally {
-      setLoading(false);
+      setCreatingIntent(false);
     }
   };
 
@@ -160,10 +204,10 @@ const CartModal = () => {
               </button>
               <form action={handleCheckout}>
                 <button
-                  disabled={loading}
-                  className='rounded-md py-3 px-4 bg-gray-800 text-white disabled:cursor-not-allowed disabled:opacity-75'
+                  disabled={creatingIntent}
+                  className='rounded-md py-3 px-4 bg-gray-800 text-white disabled:cursor-not-allowed disabled:opacity-75 flex items-center gap-2'
                 >
-                  {loading ? (
+                  {creatingIntent ? (
                     <div className='flex items-center gap-2'>
                       <LoadingAnimation /> Checkout
                     </div>
@@ -173,11 +217,13 @@ const CartModal = () => {
                 </button>
               </form>
             </div>
+            <Toaster />
           </div>
         </>
       )}
-      {showPaymentModal && (
+      {clientSecret && showPaymentModal && (
         <StripeCheckout
+          clientSecret={clientSecret}
           showPaymentModal={showPaymentModal}
           setShowPaymentModal={setShowPaymentModal}
         />

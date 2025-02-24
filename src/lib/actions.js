@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
+  createOrder,
   createProduct,
   createUser,
   deleteProductById,
@@ -8,6 +9,11 @@ import {
   updateProductUserById,
   updateUserById,
 } from "./lib";
+
+export const handleRoleChange = async (userId, isAdmin) => {
+  await updateUserById({ _id: userId, role: isAdmin ? "admin" : "normal" });
+  revalidatePath("/dashboard/users");
+};
 export const addUser = async (user) => {
   try {
     await createUser(user);
@@ -15,6 +21,15 @@ export const addUser = async (user) => {
     // redirect('/dashboard/users');
   } catch (error) {
     console.log(error);
+  }
+};
+export const createMyOrdr = async (order) => {
+  try {
+    return await createOrder(order);
+  } catch (error) {
+    console.log(error);
+
+    throw error;
   }
 };
 export const updateUser = async (user) => {

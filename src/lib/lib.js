@@ -98,6 +98,34 @@ export const getProducts = async (query, page) => {
     console.log(error);
   }
 };
+export const getOrders = async (query) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/orders?q=${query}`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return undefined;
+
+    const { orders } = await res.json();
+    return orders;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getCatDistribution = async (query) => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/products/category/unique`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) return undefined;
+
+    const { categories } = await res.json();
+    return categories;
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const getProduct = async (id) => {
   try {
     const res = await fetch(`${BASE_URL}/api/v1/products/${id}`, {
@@ -173,6 +201,17 @@ export const getFeaturedProducts = async () => {
 };
 export const createStripeIntent = async (body) => {
   const res = await fetch(`${BASE_URL}/api/v1/create-payment-intent`, {
+    method: "POST",
+    body: JSON.stringify(body),
+    cache: "no-cache",
+  });
+
+  if (!res.ok) return undefined;
+  const resJson = await res.json();
+  return resJson;
+};
+export const createOrder = async (body) => {
+  const res = await fetch(`${BASE_URL}/api/v1/orders`, {
     method: "POST",
     body: JSON.stringify(body),
     cache: "no-cache",

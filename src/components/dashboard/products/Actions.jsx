@@ -1,21 +1,51 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { FaEye, FaTrash } from "react-icons/fa"; // Import icons
+import DeleteModal from "./DeleteModel"; // Import the delete modal
 
-const Actions = ({ id, deleteAction }) => {
+const Actions = ({ id, product, deleteAction }) => {
+  const [open, setOpen] = useState(false);
+
+  const handleDeleteClick = () => {
+    setOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    await deleteAction({ id }); // Perform the deletion logic
+    setOpen(false); // Close the modal after deletion
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <div className=' flex items-center gap-2  h-full'>
+    <div className='flex items-center gap-2 h-full'>
+      {/* View Button */}
       <Link
-        href={`/dashboard/products/${id}` || "/dashboard"}
-        className=' px-3 py-1 bg-cyan-600 rounded-md cursor-pointer'
+        href={`/dashboard/products/${id}`}
+        className='flex items-center gap-1 px-3 py-1 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600 transition-all duration-300'
       >
-        view
+        <FaEye className='text-sm' />
+        <span className='hidden sm:inline'>View</span>
       </Link>
-      <form action={deleteAction}>
-        <input type='hidden' name='id' value={id} />
-        <button className=' px-3 py-1 bg-red-400 rounded-md cursor-pointer'>
-          delete
-        </button>
-      </form>
+
+      {/* Delete Button */}
+      <button
+        onClick={handleDeleteClick}
+        className='flex items-center gap-1 px-3 py-1 text-white bg-red-500 rounded-md shadow-md hover:bg-red-600 transition-all duration-300'
+      >
+        <FaTrash className='text-sm' />
+        <span className='hidden sm:inline'>Delete</span>
+      </button>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteModal
+        open={open}
+        onClose={handleClose}
+        product={product}
+        onDelete={handleDeleteConfirm}
+      />
     </div>
   );
 };

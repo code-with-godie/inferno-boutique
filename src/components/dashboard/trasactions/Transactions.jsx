@@ -1,86 +1,26 @@
-import React from 'react';
-import Table from '../table/Table';
-const columns = [
-  { field: 'title', headerName: 'username', flex: 1, headerClassName: 'red' },
-  { field: 'status', headerName: 'status', flex: 1 },
-  { field: 'createdAt', headerName: 'date', flex: 1 },
-  { field: 'amount', headerName: 'amount', flex: 1 },
-];
-const Transactions = ({ scroll, title }) => {
-  const rows = [
-    {
-      _id: 1,
-      title: 'product',
-      status: 'cancelled',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 2,
-      title: 'product',
-      status: 'completed',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 3,
-      title: 'product',
-      status: 'pending',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 4,
-      title: 'product',
-      status: 'cancelled',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 5,
-      title: 'product',
-      status: 'cancelled',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 6,
-      title: 'product',
-      status: 'pending',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 7,
-      title: 'product',
-      status: 'completed',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-    {
-      _id: 8,
-      title: 'product',
-      status: 'cancelled',
-      createdAt: '11/2/24',
-      amount: 200,
-      image: '',
-    },
-  ];
+import React from "react";
+import Table from "../table/Table";
+import { getOrders } from "@/lib/lib";
+import { transactionsColumns } from "@/utils";
+const Transactions = async ({ title }) => {
+  const rows = await getOrders(true);
+
+  // Map the data to match the columns
+  const formattedRows = rows.map((row) => ({
+    _id: row._id, // Assuming each row has a unique _id
+    username: row.userID?.username || "Unknown User", // Adjust based on your user schema
+    avatar: row.userID?.avatar, // Adjust based on your user schema
+    status: row.status,
+    count: row?.products?.length || 0,
+    products: row?.products,
+    createdAt: row.createdAt, // Format the date
+    total: `$${row.total.toFixed(2)}`, // Format the total as currency
+  }));
 
   return (
-    <div className={`bg-bgSoft p-4  shrink-0 rounded-md h-[400px]`}>
-      <h1 className=' capitalize text-lg text-textSoft '> {title} </h1>
-      <Table
-        columns={columns}
-        rows={rows}
-      />
+    <div className='bg-bgSoft shrink-0 rounded-md h-[400px] overflow-x-auto p-1'>
+      <h1 className='capitalize text-lg text-textSoft py-4'>{title}</h1>
+      <Table columns={transactionsColumns} rows={formattedRows} />
     </div>
   );
 };
